@@ -17,6 +17,11 @@ class FieldCreationDock(QDockWidget):
         self.input_divider_20 = QLineEdit(self)
         self.input_divider_20.setPlaceholderText("Введите делитель для = 20")  # Устанавливаем текст-подсказку
         self.layout.addWidget(self.input_divider_20)
+        
+        # Поле для ввода делителя при значении >= 15
+        self.input_divider_15 = QLineEdit(self)
+        self.input_divider_15.setPlaceholderText("Введите делитель для >= 15")  # Устанавливаем текст-подсказку
+        self.layout.addWidget(self.input_divider_15)
 
         # Поле для ввода делителя при значении >= 10
         self.input_divider_10 = QLineEdit(self)
@@ -146,6 +151,7 @@ class MainWindow(QMainWindow):
 
     def apply_day_logic(self):
         divider_20 = float(self.field_creation_dock.input_divider_20.text())
+        divider_15 = float(self.field_creation_dock.input_divider_15.text())
         divider_10 = float(self.field_creation_dock.input_divider_10.text())
         divider_5 = float(self.field_creation_dock.input_divider_5.text())
         divider_1 = float(self.field_creation_dock.input_divider_1.text())
@@ -155,7 +161,9 @@ class MainWindow(QMainWindow):
                 value = float(text)
                 roll = float(random_result_label.text())  # Изменено на float(random_result_label.text())
                 if roll == 20:
-                    result = value / divider_20  # Изменено на divider_20
+                    result = value / divider_20  # Изменено на divider_20   
+                elif roll >= 15:
+                    result = value / divider_15  # Изменено на divider_15
                 elif roll >= 10:
                     result = value / divider_10  # Изменено на divider_10
                 elif roll >= 5:
@@ -187,6 +195,7 @@ class MainWindow(QMainWindow):
                             input_field.setText(value)
                 # Загружаем значения делителей
                 self.field_creation_dock.input_divider_20.setText(str(data['dividers']['20']))
+                self.field_creation_dock.input_divider_15.setText(str(data['dividers']['15']))
                 self.field_creation_dock.input_divider_10.setText(str(data['dividers']['10']))
                 self.field_creation_dock.input_divider_5.setText(str(data['dividers']['5']))
                 self.field_creation_dock.input_divider_1.setText(str(data['dividers']['1']))
@@ -237,6 +246,7 @@ class MainWindow(QMainWindow):
         # Сохраняем значения делителей
         divider_data = {
             '20': self.field_creation_dock.input_divider_20.text(),
+            '15': self.field_creation_dock.input_divider_15.text(),
             '10': self.field_creation_dock.input_divider_10.text(),
             '5': self.field_creation_dock.input_divider_5.text(),
             '1': self.field_creation_dock.input_divider_1.text()
