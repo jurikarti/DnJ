@@ -1,5 +1,5 @@
 # DnJ - Dungeon and Jurikarti
-![Status](https://img.shields.io/badge/Status-alpha-white.svg)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Status](https://img.shields.io/badge/Status-alpha-white.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Описание
 
