@@ -3,7 +3,7 @@ import json
 from PySide6.QtCore import Qt
 
 from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QHBoxLayout, QVBoxLayout, QWidget, QLineEdit,
-                               QDialog, QLabel, QFileDialog, QDockWidget)
+                               QDialog, QLabel, QFileDialog, QDockWidget, QHBoxLayout)
 
 class FieldCreationDock(QDockWidget):
     def __init__(self, parent=None):
@@ -15,7 +15,7 @@ class FieldCreationDock(QDockWidget):
 
         # Поле для ввода делителя при значении равно 20
         self.input_divider_20 = QLineEdit(self)
-        self.input_divider_20.setPlaceholderText("Введите делитель для = 20")  # Устанавливаем текст-подсказку
+        self.input_divider_20.setPlaceholderText("Введите делитель для   = 20")  # Устанавливаем текст-подсказку
         self.layout.addWidget(self.input_divider_20)
         
         # Поле для ввода делителя при значении >= 15
@@ -35,12 +35,12 @@ class FieldCreationDock(QDockWidget):
 
         # Поле для ввода делителя при значении равно 1
         self.input_divider_1 = QLineEdit(self)
-        self.input_divider_1.setPlaceholderText("Введите делитель для = 1")  # Устанавливаем текст-подсказку
+        self.input_divider_1.setPlaceholderText("Введите делитель для   = 1")  # Устанавливаем текст-подсказку
         self.layout.addWidget(self.input_divider_1)
 
         # Поле для ввода названия нового поля
         self.input_field_name = QLineEdit(self)
-        self.input_field_name.setPlaceholderText("Введите название")  # Устанавливаем текст-подсказку
+        self.input_field_name.setPlaceholderText("Введите название поля")  # Устанавливаем текст-подсказку
         self.layout.addWidget(self.input_field_name)
 
         # Кнопка для создания нового поля
@@ -52,8 +52,10 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('DnDTawerna')
+        self.resize(400, 200)
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
+        
 
         # Словарь для хранения полей ввода и меток
         self.fields = {}
@@ -61,19 +63,29 @@ class MainWindow(QMainWindow):
 
         # Инициализация основного компоновщика для центрального виджета
         self.main_layout = QVBoxLayout(self.central_widget)
-
-        # Добавление растягивающего пространства в компоновщик после добавления кнопок
-        self.main_layout.addStretch()
+        
+        # Создаем горизонтальный компоновщик
+        button_layout = QHBoxLayout()
 
         # Кнопка для сохранения данных
         self.button_save = QPushButton('⚡ Сохранить', self)
+        self.button_save.setFixedSize(300, 65)  # Устанавливаем размер кнопки
         self.button_save.clicked.connect(self.save_data)
-        self.main_layout.addWidget(self.button_save)
-
+        button_layout.addWidget(self.button_save)  # Добавляем кнопку в горизонтальный компоновщик
+        
+        button_layout.addStretch(5)  # Добавляем растягивающееся пространство между кнопками
+                
         # Кнопка для импорта сохраненных данных
         self.button_import = QPushButton('⬇ Импортировать сохранение', self)
+        self.button_import.setFixedSize(300, 65)  # Устанавливаем размер кнопки
         self.button_import.clicked.connect(self.import_data)
-        self.main_layout.addWidget(self.button_import)
+        button_layout.addWidget(self.button_import)  # Добавляем кнопку в горизонтальный компоновщик
+
+        # Добавляем горизонтальный компоновщик в основной вертикальный компоновщик
+        self.main_layout.addLayout(button_layout)
+
+        # Добавление растягивающего пространства в компоновщик после добавления кнопок
+        self.main_layout.addStretch()
 
         # Пристань для создания новых полей
         self.field_creation_dock = FieldCreationDock(self)
@@ -90,19 +102,19 @@ class MainWindow(QMainWindow):
         self.field_creation_dock.hide()  # Скрываем виджет по умолчанию
 
         # Кнопка для отображения или скрытия пристани создания новых полей
-        self.button_toggle_dock = QPushButton('➕ Добавить Компонент', self)
+        self.button_toggle_dock = QPushButton('📑 Добавить Компонент', self)
         self.button_toggle_dock.clicked.connect(self.toggle_dock)
         self.main_layout.addWidget(self.button_toggle_dock)
 
         # Кнопка для выполнения логики "день"
-        self.button_day = QPushButton('☑ Посчитать', self)
+        self.button_day = QPushButton('💡 Посчитать', self)
         self.button_day.clicked.connect(self.apply_day_logic)
         self.main_layout.addWidget(self.button_day)
-
+        
     def toggle_dock(self):
         if self.field_creation_dock.isVisible():
             self.field_creation_dock.hide()
-            self.button_toggle_dock.setText('➕ Добавить Компонент')
+            self.button_toggle_dock.setText('📑 Добавить Компонент')
         else:
             self.field_creation_dock.show()
             self.button_toggle_dock.setText('Скрыть виджет')
@@ -186,7 +198,7 @@ class MainWindow(QMainWindow):
                 for field_name, value in data['fields'].items():
                     # Проверяем, существует ли поле с таким названием
                     if not any(field_name == existing_field_name for _, (_, _, existing_field_name) in
-                               self.fields.items()):
+                                self.fields.items()):
                         # Если поля нет, создаем его
                         self.create_input_field(field_name)
                     # Заполняем поле значением из файла
@@ -266,6 +278,7 @@ if __name__ == "__main__":
     window.show()
     # Устанавливаем тему Dracula
     app.setStyleSheet("""
+        * { font-size: 16px; }
         QMainWindow {
             background-color: #282a36;
         }
@@ -276,8 +289,8 @@ if __name__ == "__main__":
             padding: 10px;
             margin: 5px;
             border-radius: 5px;
-            min-width: 180px;  /* Минимальная ширина */
-            max-width: 200px;  /* Максимальная ширина */
+            min-width: 220px;  /* Минимальная ширина */
+            max-width: 220px;  /* Максимальная ширина */
         }
         QLabel {
             color: #f8f8f2;
