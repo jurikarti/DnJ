@@ -132,6 +132,9 @@ class MainWindow(QMainWindow):
             # Создание поля ввода
             input_field = QLineEdit(self)
             input_field.setPlaceholderText("Введите количество")  # Устанавливаем текст-подсказку
+            
+            delete_button = QPushButton('🗑', self)
+            delete_button.clicked.connect(lambda: self.delete_input_field(horizontal_layout, field_name))
 
             # Создание стилизованной метки для результата рандома
             random_result_label = QLineEdit(self)  # Изменено на QLineEdit
@@ -153,6 +156,7 @@ class MainWindow(QMainWindow):
             horizontal_layout.addWidget(field_label)
             horizontal_layout.addWidget(input_field)
             horizontal_layout.addWidget(random_result_label)
+            horizontal_layout.addWidget(delete_button)
 
             # Добавление горизонтального слоя в основной вертикальный слой
             self.main_layout.insertLayout(self.main_layout.count() - 1, horizontal_layout)
@@ -222,11 +226,14 @@ class MainWindow(QMainWindow):
 
         # Создание поля ввода
         input_field = QLineEdit(self)
-
-        input_field.setText('')  # Устанавливаем пустое значение по умолчанию
+        input_field.setPlaceholderText("Введите количество")  # Устанавливаем текст-подсказку
+        
+        delete_button = QPushButton('🗑', self)
+        delete_button.clicked.connect(lambda: self.delete_input_field(horizontal_layout, field_name))
 
         # Создание стилизованной метки для результата рандома
         random_result_label = QLineEdit(self)  # Изменено на QLineEdit
+        random_result_label.setPlaceholderText("1к20")  # Устанавливаем текст-подсказку
         random_result_label.setStyleSheet("""
             QLineEdit {  # Изменено на QLineEdit
                 background-color: #44475a;
@@ -244,6 +251,7 @@ class MainWindow(QMainWindow):
         horizontal_layout.addWidget(field_label)
         horizontal_layout.addWidget(input_field)
         horizontal_layout.addWidget(random_result_label)
+        horizontal_layout.addWidget(delete_button)
 
         # Добавление горизонтального слоя в основной вертикальный слой
         self.main_layout.insertLayout(self.main_layout.count() - 1, horizontal_layout)
@@ -251,6 +259,20 @@ class MainWindow(QMainWindow):
         # Сохранение ссылок на виджеты в словаре
         self.fields[self.field_count] = (input_field, random_result_label, field_name)
         self.field_count += 1
+        
+    # Метод для удаления поля ввода
+    def delete_input_field(self, layout, field_name):
+        # Удаляем виджеты из слоя
+        while layout.count():
+            child = layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        # Удаляем слой из основного компоновщика
+        self.main_layout.removeItem(layout)
+
+        # Удаляем поле из словаря
+        self.fields = {k: v for k, v in self.fields.items() if v[2] != field_name}
 
     def save_data(self):
         # Сохраняем значения полей
